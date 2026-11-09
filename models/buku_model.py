@@ -1,22 +1,39 @@
-from config.database import Database
+import mysql.connector
 
 class BukuModel:
     def __init__(self):
-        self.db = Database()
+        pass
+
+    def connect(self):
+        """Membuat koneksi ke database MySQL."""
+        return mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="perpustakaan"
+        )
 
     def get_all_buku(self):
         """Mengambil seluruh data buku dari database."""
-        conn = self.db.connect()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM buku")
-        result = cursor.fetchall()
-        conn.close()
-        return result
+        try:
+            conn = self.connect()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM buku")
+            result = cursor.fetchall()
+            conn.close()
+            return result
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
+
+    def create_buku(self, judul, penulis, tahun_terbit):
+        """Menambahkan data buku baru (disesuaikan dengan test_buku.py)."""
+        return self.tambah_buku(judul, penulis, tahun_terbit)
 
     def tambah_buku(self, judul, penulis, tahun_terbit):
         """Menambahkan data buku baru."""
         try:
-            conn = self.db.connect()
+            conn = self.connect()
             cursor = conn.cursor()
             query = "INSERT INTO buku (judul, penulis, tahun_terbit) VALUES (%s, %s, %s)"
             cursor.execute(query, (judul, penulis, tahun_terbit))
@@ -30,7 +47,7 @@ class BukuModel:
     def update_buku(self, id_buku, judul, penulis, tahun_terbit):
         """Memperbarui data buku berdasarkan id_buku."""
         try:
-            conn = self.db.connect()
+            conn = self.connect()
             cursor = conn.cursor()
             query = "UPDATE buku SET judul = %s, penulis = %s, tahun_terbit = %s WHERE id_buku = %s"
             cursor.execute(query, (judul, penulis, tahun_terbit, id_buku))
@@ -45,7 +62,7 @@ class BukuModel:
     def delete_buku(self, id_buku):
         """Menghapus data buku berdasarkan id_buku."""
         try:
-            conn = self.db.connect()
+            conn = self.connect()
             cursor = conn.cursor()
             query = "DELETE FROM buku WHERE id_buku = %s"
             cursor.execute(query, (id_buku,))
