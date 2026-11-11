@@ -1,11 +1,12 @@
 import customtkinter as ctk
 from tkinter import ttk
 
+
 class BukuView(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Sistem Manajemen Perpustakaan")
-        self.geometry("800x450")
+        self.geometry("800x520")
 
         # Konfigurasi Grid Utama (1 Baris, 2 Kolom)
         self.grid_columnconfigure(0, weight=1)
@@ -38,11 +39,20 @@ class BukuView(ctk.CTk):
         self.btn_delete = ctk.CTkButton(self.frame_kiri, text="Hapus Data (Delete)", fg_color="red")
         self.btn_delete.pack(pady=10, padx=15, fill="x")
 
+        # Tombol Logout (kembali ke jendela Login), diletakkan di dasar frame kiri
+        self.btn_logout = ctk.CTkButton(
+            self.frame_kiri,
+            text="Logout",
+            fg_color="gray30",
+            hover_color="gray20"
+        )
+        self.btn_logout.pack(side="bottom", pady=15, padx=15, fill="x")
+
         # FRAME KANAN: TABEL DAFTAR BUKU
         self.frame_kanan = ctk.CTkFrame(self)
         self.frame_kanan.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
-        ctk.CTkLabel(self.frame_kanan, text="Daftar Koleksi Buku", font=("Arial", 16, "bold")).pack(pady=15)
+        ctk.CTkLabel(self.frame_kanan, text="Daftar Koleksi Buku_103", font=("Arial", 16, "bold")).pack(pady=15)
 
         kolom = ("id", "judul", "penulis", "tahun")
         self.tabel = ttk.Treeview(self.frame_kanan, columns=kolom, show="headings", height=15)
@@ -60,6 +70,7 @@ class BukuView(ctk.CTk):
         self.tabel.column("tahun", width=60, anchor="center")
 
         self.tabel.pack(fill="both", expand=True, padx=15, pady=10)
+
 
 if __name__ == "__main__":
     app = BukuView()
