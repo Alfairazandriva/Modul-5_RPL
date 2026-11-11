@@ -1,5 +1,6 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from models.user_model import UserModel
+
 
 def test_hash_password_konsisten():
     password_asli = "admin123"
@@ -8,21 +9,26 @@ def test_hash_password_konsisten():
 
     assert hash_1 != password_asli
     assert hash_1 == hash_2
-    assert len(hash_1) == 64
+    assert len(hash_1) == 64  # Panjang karakter standar SHA-256
 
-def test_autentikasi_pengguna_berhasil():
+
+@patch("models.user_model.Database")
+def test_autentikasi_pengguna_berhasil(mock_database):
+    # Database palsu: tidak ada koneksi ke MySQL sungguhan
+    mock_database.return_value.get_connection.return_value = MagicMock()
+
     model = UserModel()
-    model.conn = MagicMock()
     mock_cursor = MagicMock()
-
     mock_cursor.fetchone.return_value = {
         "id_user": 1,
         "username": "petugas",
-        "role": "admin"
+        "role": "admin",
     }
+    model.conn = MagicMock()
     model.conn.cursor.return_value = mock_cursor
 
     hasil = model.autentikasi("petugas", "admin123")
+
     assert hasil is not None
     assert hasil["username"] == "petugas"
     assert hasil["role"] == "admin"
